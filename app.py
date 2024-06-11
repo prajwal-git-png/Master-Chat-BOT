@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 def cohere_ai_r_plus(query, temperature=0.7, web_search=False):
     url = "https://production.api.os.cohere.ai/coral/v1/chat"
-    auth = "Bearer 3DZxbNWAiBR5zYYxHNkeWUQ5jRQq5iJg53NUYr23"
+    auth = "Bearer [add your key]"
     model = "command-r-plus"
 
     headers = {
@@ -46,7 +46,7 @@ class StabilityAI:
     def __init__(self):
         self.headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer sk-n7A79xf4jkfhsfD8pBS0uSyU2YvKiATgl9W6hRMN6eIYZMuZ"
+            "Authorization": "Bearer [ Add your key ]"
         }
 
     def text_to_image(self, text):
@@ -131,7 +131,7 @@ def generate_response(user_query, session_cookie="MINE"):
 
 # GEMINI IMPLEMENTED HERE 
 
-genai.configure(api_key="AIzaSyAzwzm4RVxgbfaK8CCwb8zT98pM4Xjgipk")
+genai.configure(api_key="ADd yours")
 
 instruction = (
     "Imagine you are a person named gem , response to the user request as a human - help them to analyze there mental state and help them to enhance their mood , and make responses shorter and meaning full"
