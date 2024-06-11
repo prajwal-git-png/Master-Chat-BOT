@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrated App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/cohere'">Cohere</button>
+        <button onclick="location.href='/imggen'">ImgGen</button>
+        <button onclick="location.href='/chat_gem'">Gemini</button>
+        <button onclick="location.href='/pai'">Pai</button>
+    </nav>
+    <div class="container">
+        <h2>Welcome to the Integrated App</h2>
+        <p>Use the buttons above to switch between different applications.</p>
+    </div>
+</body>
+</html>

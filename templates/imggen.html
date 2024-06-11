@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image gen</title>
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='imggen.css') }}" />
+
+
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Marcellus&display=swap');
+    </style>
+  </head>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Text to Image Generator</title>
+      <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='imggen.css') }}"
+      />
+    </head>
+    <body>
+      <!-- side bar -->
+      <div>
+        <div class="sidebar">
+          <div class="top">
+          </div>
+          <div class="bottom">
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/cohere">
+                <img src="https://asset.brandfetch.io/idfDTLvPCK/idfkFVkJdH.png?updated=1683095441273" alt=""/>
+              </a>
+              <p style="margin: 3px; color: #f0f0f0; font-weight: 400; font-family: Poppins, serif;">
+                Cohere
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/chat_gem">
+                <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" alt=""/>
+              </a>
+              <p style="margin: 3px; color:  #ebebeb; font-weight: 400; font-family: Poppins, serif;">
+                Google
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/pai">
+                <img src="https://pi.ai/pi-logo-192-square.png" alt=""/>
+              </a>
+              <p style="margin: 3px; color:  #dddddd; font-weight: 400; font-family: Poppins, serif;">
+                Pai
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/imggen">
+                <img src="https://r.bing.com/rp/nthuaHo_0CMpu-jrRrRx7PLDd10.svg" alt=""/>
+              </a>
+              <p style="margin: 3px; color:  #dbdbdb; font-weight: 400; font-family: Poppins, serif;">
+                Image Gen
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- main container -->
+      <div class="main-container">
+        <p
+        style="
+          font-size: 22px;
+          font-family: Poppins, serif;
+          width: 50px;
+          z-index: 1;
+          padding: 0px;
+          display: block;
+          position: absolute;
+          left: 20%;
+          color:  #2b0007;
+        "
+      >
+        ImageGen
+      </p>
+      <div class="container">
+        <div id="chat-history">
+          {% for message in bot_responses %}
+          <div class="message-container">
+            {% if message.user_input %}
+            <p class="user-message">{{ message.user_input }}</p>
+            {% endif %}
+            <img src="{{ message.image_src }}" alt="Generated Image" />
+          </div>
+          {% endfor %}
+        </div>
+        <div class="main-bottom">
+          <form id="chat-form" class="search-box user-input-div" method="POST">
+            <input autocomplete="off"
+              type="text"
+              id="user-input"
+              name="text"
+              placeholder="Type your message..."
+            />
+            <button type="submit" id="submit-btn">
+              <svg
+                class="w-6 h-6 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
+                />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+      </div>
+
+      <script>
+        document
+          .getElementById("chat-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            sendMessage();
+          });
+        function clearInputField() {
+          document.getElementById("user-input").value = "";
+        }
+        function sendMessage() {
+          var userInput = document.getElementById("user-input").value;
+          if (userInput.trim() !== "") {
+            // Append user message to chat history
+            showLoadingAnimation();
+            
+
+            appendUserMessage(userInput);
+            document.getElementById("user-input").value = "";
+          showBotTyping();
+
+
+            fetch("/imggen", {
+              // Adjust the route to match your Flask app
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ text: userInput }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.image_src) {
+                  appendBotMessage(data.image_src);
+                  hideBotTyping();
+
+                  hideLoadingAnimation();
+                } else {
+                  console.error("Unexpected response structure:", data);
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                hideLoadingAnimation();
+              });
+            clearInputField();
+          }
+        }
+        function showBotTyping() {
+        var chatHistory = document.getElementById("chat-history");
+        var botTypingElement = document.createElement("div");
+        botTypingElement.className = "bot-typing";
+        botTypingElement.innerHTML =
+          '<div class="lds-ellipsis"><div></div><div></div><div></div></div>';
+        chatHistory.appendChild(botTypingElement);
+      }
+
+      function hideBotTyping() {
+        var botTypingElement = document.querySelector(".bot-typing");
+        if (botTypingElement) {
+          botTypingElement.remove();
+        }
+      }
+
+      function showLoadingAnimation() {
+        var loadingContainer = document.getElementById("loading-container");
+        if (!loadingContainer) {
+          loadingContainer = document.createElement("div");
+          loadingContainer.id = "loading-container";
+          loadingContainer.innerHTML = '<div class="loader"></div>';
+          document.getElementById("chat-form").appendChild(loadingContainer);
+        }
+      }
+
+      function hideLoadingAnimation() {
+        var loadingContainer = document.getElementById("loading-container");
+        if (loadingContainer) {
+          loadingContainer.remove();
+        }
+      }
+
+        function appendUserMessage(message) {
+          var chatHistory = document.getElementById("chat-history");
+          var userMessageElement = document.createElement("div");
+          userMessageElement.className = "message-container user-message";
+          userMessageElement.innerHTML = `<p>${message}</p>`;
+          chatHistory.appendChild(userMessageElement);
+        }
+        function appendBotMessage(imageSrc) {
+          var chatHistory = document.getElementById("chat-history");
+          var botMessageContainer = document.createElement("div");
+          botMessageContainer.className = "message-container bot-message";
+
+          var imageElement = document.createElement("img");
+          imageElement.src = imageSrc;
+          imageElement.alt = "Generated Image";
+
+          var downloadButton = document.createElement("button");
+          downloadButton.textContent = "Download";
+          downloadButton.className = "download-button btn";
+          downloadButton.onclick = function () {
+            downloadImage(imageSrc);
+          };
+
+          botMessageContainer.appendChild(imageElement);
+          botMessageContainer.appendChild(downloadButton);
+
+          chatHistory.appendChild(botMessageContainer);
+        }
+
+        function downloadImage(imageSrc) {
+          var link = document.createElement("a");
+          link.href = imageSrc;
+          link.download = "generated_image.png";
+          link.click();
+        }
+
+ 
+      </script>
+    </body>
+  </html>
+</html>

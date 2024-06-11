@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Ai</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='pai.css') }}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+    </style>
+</head>
+<body>
+    <div>
+        <div class="sidebar">
+          <div class="top">
+          </div>
+          <div class="bottom">
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/cohere">
+                <img src="https://asset.brandfetch.io/idfDTLvPCK/idfkFVkJdH.png?updated=1683095441273" alt=""/>
+              </a>
+              <p style="margin: 3px; color: #012900; font-weight: 600; font-family: Poppins, serif;">
+                Cohere
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/chat_gem">
+                <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" alt=""/>
+              </a>
+              <p style="margin: 3px; color: #012900; font-weight: 600; font-family: Poppins, serif;">
+                Google
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/pai">
+                <img src="https://pi.ai/pi-logo-192-square.png" alt=""/>
+              </a>
+              <p style="margin: 3px; color: #012900; font-weight: 600; font-family: Poppins, serif;">
+                Pai
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/imggen">
+                <img src="https://r.bing.com/rp/nthuaHo_0CMpu-jrRrRx7PLDd10.svg" alt=""/>
+              </a>
+              <p style="margin: 3px; color: #012900; font-weight: 600; font-family: Poppins, serif;">
+                Image Gen
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div class="main-container">
+        <div class="container">
+            <div id="chat-history" class="chat-log"></div>
+            <div class="input-container search-box">
+                <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off"/>
+                <button type="submit" id="submit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" fill="currentColor"><path fill-rule="evenodd" d="M.852 7.648a1.2 1.2 0 0 1 0-1.696l4.8-4.8a1.2 1.2 0 0 1 1.696 0l4.8 4.8a1.2 1.2 0 1 1-1.697 1.696L7.7 4.897V14a1.2 1.2 0 0 1-2.4 0V4.897L2.548 7.648a1.2 1.2 0 0 1-1.696 0Z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- <script src="{{ url_for('static', filename='js/script.js') }}"></script> -->
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            const chatLog = document.getElementById('chat-history');
+    
+            if (userInput.trim() === "") {
+                return;
+            }
+    
+            chatLog.innerHTML += `<div class="user-message">${userInput}</div>`;
+            document.getElementById('user-input').value = "";
+    
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: userInput }),
+                });
+    
+                const data = await response.json();
+                chatLog.innerHTML += `<div class="bot-message">${data.response}</div>`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+                chatLog.innerHTML += `<div class="bot-message">An error occurred. Please try again.</div>`;
+            }
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', function(event) {
+            event.preventDefault();
+            sendMessage();
+        });
+
+        document.getElementById('user-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

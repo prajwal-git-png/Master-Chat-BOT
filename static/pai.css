@@ -1,0 +1,202 @@
+body {
+    font-family: "Libre Baskerville", serif !important;
+    font-weight: 400;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background-image: url(https://images.unsplash.com/photo-1627037558426-c2d07beda3af?q=80&w=1575&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+      background-size: cover;
+      background-position: center;
+      /* background-color: #202020; */
+      /* background-color: #f9f0e1; */
+    }
+    p{
+      margin: 0;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    
+    #chat-form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    
+    #submit-btn {
+      padding: 8px 12px;
+      background-color:#e5d0a9bd;
+    
+      color: #fff;
+      border: none;
+    
+      border-radius: 50px;
+      cursor: pointer;
+    }
+    
+    #chat-history {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      font-family: "Libre Baskerville", serif !important;
+    
+      overflow: scroll;
+    }
+    #chat-history::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .user-message {
+      align-self: flex-end;
+      /* background: linear-gradient(130deg, #c43755 20%, #0a55fd 77.5%); */
+      background:rgba(247, 228, 182, 0.589);
+    
+      color: rgb(0, 54, 5);
+      border-radius: 10px;
+      font-weight: 500;
+      font-family: "Libre Baskerville", serif !important;
+    
+      font-size: 16px;
+      padding: 5px 10px;
+      max-width: 70%; /* Adjust as needed */
+    }
+    
+    p{
+      font-size: 16px;
+    }
+    .bot-message {
+      align-self: flex-start;
+      background-color: #f3df9da6;
+      color: rgb(14, 41, 2);
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 16px;
+      font-family: "Libre Baskerville", serif !important;
+    
+    
+      padding: 5px 10px;
+      max-width: 65%; /* Adjust as needed */
+    }
+    
+  
+    .language {
+      font-size: 14px;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background-color:rgb(255, 255, 255);
+      color: #1d1c1c;
+      padding: 10px 20px;
+    font-family: "Libre Baskerville", serif !important;
+  
+      height: 30px;
+      border-radius: 50px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow */
+    }
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      outline: none;
+      font-size: 1.1875rem;
+      letter-spacing: -.19px;
+    font-family: "Libre Baskerville", serif !important;
+  
+      font-weight: 500;
+      border: none;
+      /* padding: 8px; */
+      color: rgb(9, 49, 0);
+      /* font-size: 20px; */
+    }
+    .search-box div {
+      display: flex;
+      align-items: center;
+    font-family: "Libre Baskerville", serif !important;
+  
+      gap: 15px;
+    }
+    .main-bottom {
+      position: absolute;
+      bottom: -83px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 940px;
+      padding: 0px 20px;
+    }
+    
+    .main-container {
+      display: flex;
+      justify-content: center;
+      background-color:rgba(249, 240, 225, 0.342);
+      align-items: start;
+      height: 100vh;
+      width: 225vh;
+    }
+    .container {
+      display: block;
+      position: relative;
+      width: calc(100% - 40px); 
+      max-width: 55%;
+      left: 50px;
+      top: 15px;
+      margin: 0;
+      padding: 20px;
+      height: 75%;
+      /* background-color:rgb(249 240 225); */
+    
+      border-radius: 5px;
+    }
+    
+    /* side bar */
+    .sidebar {
+      position: absolute;
+      width: 38vh;
+      height: 100%;
+      display: inline-flex;
+      flex-direction: column-reverse;
+      justify-content: space-between;
+      background-color:rgba(230, 205, 162, 0.747);
+      padding: 25px 15px;
+    }
+    
+    
+    .sidebar img {
+      width: 25px;
+      color: #ffffff;
+      filter: invert(100%);
+    }
+    
+    .sidebar .bottom {
+      display: flex;
+      flex-direction: column;
+    font-family: "Libre Baskerville", serif !important;
+  
+    }
+    .sidebar .bottom-item {
+      padding-right: 10px;
+      cursor: pointer;
+      font-family: "Libre Baskerville", serif !important;
+    
+      display: flex; 
+      align-items: center; 
+    }
+    
+    .sidebar .bottom-item img {
+      margin-right: 25px; 
+    }
+    
+    
+    
+    
+  
+    
+    

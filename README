@@ -1,0 +1,46 @@
+Project Name
+Description
+
+"Chat bot"
+
+`Requirements`
+
+
+Python 3.x
+Flask
+requests
+json
+google.generativeai
+
+
+``Installation``
+Step 1: Clone the Repository
+
+
+Step 2: Create and Activate a Virtual Environment
+
+
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+Step 3: Install Dependencies
+
+
+`` pip install -r requirements.txt``
+
+
+
+Using the Executable
+If you prefer to run the application using the provided executable:
+
+
+Locate the app.exe file in the dist directory.
+Run the executable by double-clicking it or via PowerShell:
+powershell
+
+Copy code
+``.\dist\app.exe``
+
+
+
+

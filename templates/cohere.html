@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cohere</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='cohere.css') }}"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Marcellus&display=swap");
+    </style>
+  </head>
+  <body>
+    <!-- side bar -->
+
+    <div>
+      <div class="sidebar">
+        <div class="top"></div>
+        <div class="bottom">
+          <div class="bottom-item recent-entry">
+            <a target="_blank" href="/cohere">
+              <img
+                src="https://asset.brandfetch.io/idfDTLvPCK/idfkFVkJdH.png?updated=1683095441273"
+                alt=""
+              />
+            </a>
+            <p
+              style="
+                margin: 3px;
+                color: #ccc;
+                font-weight: 400;
+                font-family: Poppins, serif;
+              "
+            >
+              Cohere
+            </p>
+          </div>
+          <div class="bottom-item recent-entry">
+            <a target="_blank" href="/chat_gem">
+              <img
+                src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg"
+                alt=""
+              />
+            </a>
+            <p
+              style="
+                margin: 3px;
+                color: #ccc;
+                font-weight: 400;
+                font-family: Poppins, serif;
+              "
+            >
+              Google
+            </p>
+          </div>
+          <div class="bottom-item recent-entry">
+            <a target="_blank" href="/pai">
+              <img src="https://pi.ai/pi-logo-192-square.png" alt="" />
+            </a>
+            <p
+              style="
+                margin: 3px;
+                color: #ccc;
+                font-weight: 400;
+                font-family: Poppins, serif;
+              "
+            >
+              Pai
+            </p>
+          </div>
+          <div class="bottom-item recent-entry">
+            <a target="_blank" href="/imggen">
+              <img
+                src="https://r.bing.com/rp/nthuaHo_0CMpu-jrRrRx7PLDd10.svg"
+                alt=""
+              />
+            </a>
+            <p
+              style="
+                margin: 3px;
+                color: #ccc;
+                font-weight: 400;
+                font-family: Poppins, serif;
+              "
+            >
+              Image Gen
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- main container -->
+    <div class="main-container">
+      <p
+        style="
+          font-size: 22px;
+          font-family: system-ui;
+          width: 50px;
+          z-index: 1;
+          padding: 0px;
+          display: block;
+          position: absolute;
+          left: 20%;
+          color: #b3b3b3;
+        "
+      >
+        Cohere
+      </p>
+      <div class="container">
+        <div id="chat-history"></div>
+        <!-- <div class="search-box user-input-div"> -->
+        <div class="main-bottom">
+          <form id="chat-form" class="search-box user-input-div">
+            <input
+              type="text"
+              id="user-input"
+              placeholder="Type your message..."
+              autocomplete="off"
+            />
+            <button type="submit" id="submit-btn">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="text-white dark:text-black"
+              >
+                <path
+                  d="M7 11L12 6L17 11M12 18V7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- </div> -->
+    <script>
+      document
+        .getElementById("chat-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          sendMessage();
+        });
+
+      function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput.trim() !== "") {
+          showLoadingAnimation();
+
+          appendUserMessage(userInput);
+          document.getElementById("user-input").value = "";
+          showBotTyping();
+          fetch("/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_input: userInput }),
+          })
+            .then((response) => response.text())
+            .then((data) => {
+              appendBotMessage(data);
+              hideBotTyping();
+              hideLoadingAnimation();
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+      }
+
+      // typing animation added dynamically
+      function showBotTyping() {
+        var chatHistory = document.getElementById("chat-history");
+        var botTypingElement = document.createElement("div");
+        botTypingElement.className = "bot-typing";
+        botTypingElement.innerHTML =
+          '<div class="lds-ellipsis"><div></div><div></div><div></div></div>';
+        chatHistory.appendChild(botTypingElement);
+      }
+
+      function hideBotTyping() {
+        var botTypingElement = document.querySelector(".bot-typing");
+        if (botTypingElement) {
+          botTypingElement.remove();
+        }
+      }
+
+      function showLoadingAnimation() {
+        var loadingContainer = document.getElementById("loading-container");
+        if (!loadingContainer) {
+          loadingContainer = document.createElement("div");
+          loadingContainer.id = "loading-container";
+          loadingContainer.innerHTML = '<div class="loader"></div>';
+          document.getElementById("chat-form").appendChild(loadingContainer);
+        }
+      }
+
+      function hideLoadingAnimation() {
+        var loadingContainer = document.getElementById("loading-container");
+        if (loadingContainer) {
+          loadingContainer.remove();
+        }
+      }
+
+      function appendUserMessage(message) {
+        var chatHistory = document.getElementById("chat-history");
+        var userMessageElement = document.createElement("div");
+        userMessageElement.className = "user-message";
+        userMessageElement.textContent = message;
+        chatHistory.appendChild(userMessageElement);
+      }
+
+      function appendBotMessage(message) {
+        var chatHistory = document.getElementById("chat-history");
+        var botMessageElement = document.createElement("div");
+        botMessageElement.className = "bot-message";
+        var messageParts = message.split("```");
+
+        for (var i = 0; i < messageParts.length; i++) {
+          if (i % 2 === 0) {
+            // Normal text or bold text
+            var content = messageParts[i].split("**"); // Split by '**'
+            for (var j = 0; j < content.length; j++) {
+              if (j % 2 === 0) {
+                // Normal text
+                var preElement = document.createElement("pre");
+                preElement.textContent = content[j];
+                preElement.style.maxWidth = "100%"; // Adjust the value as needed
+                preElement.style.whiteSpace = "pre-wrap"; // Add this line
+                botMessageElement.appendChild(preElement);
+              } else {
+                // Bold text
+                var boldElement = document.createElement("b");
+                boldElement.textContent = content[j];
+                botMessageElement.appendChild(boldElement);
+              }
+            }
+          } else {
+            // Code snippet
+            var codeSnippetDiv = document.createElement("div");
+            codeSnippetDiv.className = "code-snippet";
+
+            var headerDiv = document.createElement("div");
+            headerDiv.className = "header";
+
+            var copyButtonSpan = document.createElement("span");
+            copyButtonSpan.className = "copy-button";
+
+            var copyButton = document.createElement("button");
+            copyButton.textContent = "Copy code";
+
+            // Find the code element
+            var codeElement = document.createElement("pre");
+            codeElement.textContent = messageParts[i].trim();
+
+            // Add click event listener to copy button
+            copyButton.addEventListener("click", function () {
+              copyCode(this, codeElement);
+            });
+
+            copyButtonSpan.appendChild(copyButton);
+            headerDiv.appendChild(copyButtonSpan);
+
+            var codeDiv = document.createElement("div");
+            codeDiv.className = "code";
+
+            codeDiv.appendChild(codeElement);
+
+            codeSnippetDiv.appendChild(headerDiv);
+            codeSnippetDiv.appendChild(codeDiv);
+
+            botMessageElement.appendChild(codeSnippetDiv);
+          }
+        }
+
+        chatHistory.appendChild(botMessageElement);
+      }
+
+      function copyCode(button, codeElement) {
+        var range = document.createRange();
+        range.selectNode(codeElement);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand("copy");
+        window.getSelection().removeAllRanges();
+
+        button.textContent = "Copied!";
+        setTimeout(function () {
+          button.textContent = "Copy code";
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>

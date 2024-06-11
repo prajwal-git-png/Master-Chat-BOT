@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gemini</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='gemini.css') }}"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+    </style>
+  </head>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Text to Image Generator</title>
+      <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='gemini.css') }}"
+      />
+    </head>
+    <body>
+      <!-- side bar -->
+      <div>
+        <div class="sidebar">
+          <div class="top"></div>
+          <div class="bottom">
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/cohere">
+                <img
+                  src="https://asset.brandfetch.io/idfDTLvPCK/idfkFVkJdH.png?updated=1683095441273"
+                  alt=""
+                />
+              </a>
+              <p
+                style="
+                  margin: 3px;
+                  color: #ccc;
+                  font-weight: 400;
+                  font-family: Poppins, serif;
+                "
+              >
+                Cohere
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/chat_gem">
+                <img
+                  src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg"
+                  alt=""
+                />
+              </a>
+              <p
+                style="
+                  margin: 3px;
+                  color: #ccc;
+                  font-weight: 400;
+                  font-family: Poppins, serif;
+                "
+              >
+                Google
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/pai">
+                <img src="https://pi.ai/pi-logo-192-square.png" alt="" />
+              </a>
+              <p
+                style="
+                  margin: 3px;
+                  color: #ccc;
+                  font-weight: 400;
+                  font-family: Poppins, serif;
+                "
+              >
+                Pai
+              </p>
+            </div>
+            <div class="bottom-item recent-entry">
+              <a target="_blank" href="/imggen">
+                <img
+                  src="https://r.bing.com/rp/nthuaHo_0CMpu-jrRrRx7PLDd10.svg"
+                  alt=""
+                />
+              </a>
+              <p
+                style="
+                  margin: 3px;
+                  color: #ccc;
+                  font-weight: 400;
+                  font-family: Poppins, serif;
+                "
+              >
+                Image Gen
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- main container -->
+      <div class="main-container">
+        <p
+          style="
+            font-size: 22px;
+            font-family: Outfit;
+            width: 50px;
+            margin-top: 5px;
+            z-index: 1;
+            padding: 0px;
+            display: block;
+            position: absolute;
+            left: 20%;
+            color: #666666;
+          "
+        >
+          Gemini
+        </p>
+        <div class="container">
+          <div id="chat-history">
+            {% for message in bot_responses %}
+            <div class="message-container">
+              {% if message.user_input %}
+              <p class="user-message">{{ message.user_input }}</p>
+              {% endif %}
+              <img src="{{ message.image_src }}" alt="Generated Image" />
+            </div>
+            {% endfor %}
+          </div>
+          <div class="main-bottom">
+            <form
+              id="chat-form"
+              class="search-box user-input-div"
+              method="POST"
+            >
+              <input
+                type="text"
+                id="user-input"
+                name="text"
+                placeholder="Type your message..."
+                autocomplete="off"
+              />
+              <button type="submit" id="submit-btn">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="text-white dark:text-black"
+                >
+                  <path
+                    d="M7 11L12 6L17 11M12 18V7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document
+          .getElementById("chat-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            sendMessage();
+          });
+
+        function clearInputField() {
+          document.getElementById("user-input").value = "";
+        }
+
+        function sendMessage() {
+          var userInput = document.getElementById("user-input").value;
+          if (userInput.trim() !== "") {
+            // Append user message to chat history
+            showLoadingAnimation();
+            appendUserMessage(userInput);
+            document.getElementById("user-input").value = "";
+            showBotTyping();
+
+            fetch("/chat_gem", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: "user_input=" + userInput,
+            })
+              .then((response) => response.text())
+              .then((data) => {
+                appendBotMessage(data);
+                hideBotTyping();
+
+                hideLoadingAnimation();
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                hideLoadingAnimation();
+              });
+
+            clearInputField();
+          }
+        }
+
+        function showBotTyping() {
+          var chatHistory = document.getElementById("chat-history");
+          var botTypingElement = document.createElement("div");
+          botTypingElement.className = "bot-typing";
+          botTypingElement.innerHTML =
+            '<div class="lds-ellipsis"><div></div><div></div><div></div></div>';
+          chatHistory.appendChild(botTypingElement);
+        }
+
+        function hideBotTyping() {
+          var botTypingElement = document.querySelector(".bot-typing");
+          if (botTypingElement) {
+            botTypingElement.remove();
+          }
+        }
+
+        function showLoadingAnimation() {
+          var loadingContainer = document.getElementById("loading-container");
+          if (!loadingContainer) {
+            loadingContainer = document.createElement("div");
+            loadingContainer.id = "loading-container";
+            loadingContainer.innerHTML = '<div class="loader"></div>';
+            document.getElementById("chat-form").appendChild(loadingContainer);
+          }
+        }
+
+        function hideLoadingAnimation() {
+          var loadingContainer = document.getElementById("loading-container");
+          if (loadingContainer) {
+            loadingContainer.remove();
+          }
+        }
+
+        function appendUserMessage(message) {
+          var chatHistory = document.getElementById("chat-history");
+          var userMessageElement = document.createElement("div");
+          userMessageElement.className = "message-container user-message";
+          userMessageElement.innerHTML = `<p>${message}</p>`;
+          chatHistory.appendChild(userMessageElement);
+        }
+        function appendBotMessage(message) {
+          var chatHistory = document.getElementById("chat-history");
+          var botMessageElement = document.createElement("div");
+          botMessageElement.className = "bot-message";
+
+          var messageParts = message.split("```");
+          for (var i = 0; i < messageParts.length; i++) {
+            if (i % 2 === 0) {
+              // Normal text or text with formatting
+              var formattedText = document.createElement("span");
+              botMessageElement.appendChild(formattedText);
+
+              // Check for formatting symbols and apply corresponding styles
+              if (
+                messageParts[i].startsWith("`") &&
+                messageParts[i].endsWith("`")
+              ) {
+                // Bold message
+                var boldText = document.createElement("b");
+                boldText.textContent = messageParts[i].substring(
+                  1,
+                  messageParts[i].length - 1
+                );
+                formattedText.appendChild(boldText);
+              } else if (
+                messageParts[i].startsWith("**") &&
+                messageParts[i].endsWith("**")
+              ) {
+                // Italicized message
+                var italicText = document.createElement("b");
+                italicText.textContent = messageParts[i].substring(
+                  3,
+                  messageParts[i].length - 3
+                );
+                formattedText.appendChild(italicText);
+              } else if (
+                messageParts[i].startsWith("*") &&
+                messageParts[i].endsWith("*")
+              ) {
+                // Italicized message
+                var italicText = document.createElement("b");
+                italicText.textContent = messageParts[i].substring(
+                  3,
+                  messageParts[i].length - 3
+                );
+                formattedText.appendChild(italicText);
+              } else {
+                // Normal text with typing animation
+                typeMessage(formattedText, messageParts[i]);
+              }
+            } else {
+              // Preformatted text without typing animation
+              var preformattedText = document.createElement("pre");
+              preformattedText.textContent = messageParts[i];
+              botMessageElement.appendChild(preformattedText);
+            }
+          }
+          chatHistory.appendChild(botMessageElement);
+        }
+
+        function typeMessage(element, message) {
+          var index = 0;
+          var typingSpeed = 20; // Adjust typing speed as needed
+          var typingInterval = setInterval(function () {
+            element.textContent += message[index];
+            index++;
+            if (index === message.length) {
+              clearInterval(typingInterval);
+            }
+          }, typingSpeed);
+        }
+      </script>
+    </body>
+  </html>
+</html>
